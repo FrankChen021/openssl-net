@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -152,46 +153,70 @@ namespace OpenSSL.Core
 		#region Initialization
 
 		static Native()
-		{
-			var lib = Version.Library;
-			var wrapper = Version.Wrapper;
-			if (lib.Raw < wrapper.Raw)
-				throw new Exception(string.Format("Invalid version of {0}, expecting {1}, got: {2}",
-					DLLNAME, wrapper, lib));
+	{
+	  SetNativeDLLSearchPath();
+
+	  var lib = Version.Library;
+	  var wrapper = Version.Wrapper;
+	  if (lib.Raw < wrapper.Raw)
+		throw new Exception(string.Format("Invalid version of {0}, expecting {1}, got: {2}",
+			DLLNAME, wrapper, lib));
 
 #if MEMORY_TRACKER
 			MemoryTracker.Init();
 #endif
 
-			// Enable FIPS mode
-			if (FIPS.Enabled)
-			{
-				if (FIPS_mode_set(1) == 0)
-				{
-					throw new Exception("Failed to initialize FIPS mode");
-				}
-			}
-
-			ERR_load_crypto_strings();
-			SSL_load_error_strings();
-
-			OPENSSL_add_all_algorithms_noconf();
-
-			// Initialize SSL library
-			Native.ExpectSuccess(SSL_library_init());
-
-			var seed = new byte[128];
-			var rng = RandomNumberGenerator.Create();
-			rng.GetBytes(seed);
-			RAND_seed(seed, seed.Length);
+	  // Enable FIPS mode
+	  if (FIPS.Enabled)
+	  {
+		if (FIPS_mode_set(1) == 0)
+		{
+		  throw new Exception("Failed to initialize FIPS mode");
 		}
+	  }
 
-		#endregion
+	  ERR_load_crypto_strings();
+	  SSL_load_error_strings();
 
-		#region Version
+	  OPENSSL_add_all_algorithms_noconf();
 
-		// 1.0.2a Release
-		public const uint Wrapper = 0x1000201F;
+	  // Initialize SSL library
+	  Native.ExpectSuccess(SSL_library_init());
+
+	  var seed = new byte[128];
+	  var rng = RandomNumberGenerator.Create();
+	  rng.GetBytes(seed);
+	  RAND_seed(seed, seed.Length);
+	}
+
+	private static void SetNativeDLLSearchPath()
+	{
+	  //
+	  //set the PATH variable of current process to search native dll
+	  //
+	  //since the NativeRuntime.OpenSSL package places defines a prop file 
+	  //to copy DLL into 'x86' or 'x64' directories for applications which targets net461,
+	  //we need to set the PATH variable to help to search native DLLs
+	  //
+	  //and for NETCore applications, these DLLs will be copied into 'runtime' folder
+	  //which is a search path for these applications,
+	  //so we do not need to set environment variables
+	  //
+	  var dir = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName;
+	  var dlldir = Path.Combine(dir, System.Environment.Is64BitProcess ? "x64" : "x86");
+	  if (Directory.Exists(dlldir))
+	  {
+		string path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+		Environment.SetEnvironmentVariable("PATH", dir + ";" + path, EnvironmentVariableTarget.Process);
+	  }
+	}
+
+	#endregion
+
+	#region Version
+
+	// 1.0.2a Release
+	public const uint Wrapper = 0x1000201F;
 
 		[DllImport(DLLNAME, CallingConvention = CallingConvention.Cdecl)]
 		public extern static IntPtr SSLeay_version(int type);
