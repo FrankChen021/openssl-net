@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>NativeRuntime.OpenSSL</id>
+        <version>1.0.21</version>
+        <authors>Frank Chen</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This package contains native runtimes of OpenSSL(v1.0.2a) for .NET Core Applications
+
+For Windows platform, this package requires VC140 redistributed packaged installed.</description>
+        <language>c++</language>
+    </metadata>
+    <files>
+        <file src="runtimes\win7-x64\native\libeay32.dll" target="runtimes\win7-x64\native\libeay32.dll" />
+        <file src="runtimes\win7-x64\native\ssleay32.dll" target="runtimes\win7-x64\native\ssleay32.dll" />
+        <file src="runtimes\win7-x86\native\libeay32.dll" target="runtimes\win7-x86\native\libeay32.dll" />
+        <file src="runtimes\win7-x86\native\ssleay32.dll" target="runtimes\win7-x86\native\ssleay32.dll" />
+    </files>
+</package>
