@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project Files", "Project Files", "{0B96FB71-2BB0-48F8-B3E0-E3848A4F9E87}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project Files", "Project Fi
 		release.cmd = release.cmd
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedOpenSsl", "ManagedOpenSsl\ManagedOpenSsl.csproj", "{73DCC218-655B-485F-8EAC-0CE5F2F7343D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagedOpenSsl", "ManagedOpenSsl\ManagedOpenSsl.csproj", "{73DCC218-655B-485F-8EAC-0CE5F2F7343D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "cli\cli.csproj", "{F50628FD-5AE4-4A16-A062-4687B2EAD7EE}"
 EndProject
@@ -30,8 +30,8 @@ Global
 		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
-		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Trace|Any CPU.Build.0 = Trace|Any CPU
+		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Trace|Any CPU.ActiveCfg = Release|Any CPU
+		{73DCC218-655B-485F-8EAC-0CE5F2F7343D}.Trace|Any CPU.Build.0 = Release|Any CPU
 		{F50628FD-5AE4-4A16-A062-4687B2EAD7EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F50628FD-5AE4-4A16-A062-4687B2EAD7EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F50628FD-5AE4-4A16-A062-4687B2EAD7EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,6 +47,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {381CCE40-9791-43A4-9818-44AFDD7BFCFE}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
