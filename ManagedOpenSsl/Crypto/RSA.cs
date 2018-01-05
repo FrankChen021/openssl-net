@@ -42,11 +42,43 @@ namespace OpenSSL.Crypto
 			// version is declared natively as long
 			// http://stackoverflow.com/questions/384502/what-is-the-bit-size-of-long-on-64-bit-windows
 			// this is an attempt to map it in a portable way:
-#if _WIN64
-			public int version;
-#else
 			public IntPtr version;
-#endif
+			public IntPtr meth;
+
+			public IntPtr engine;
+			public IntPtr n;
+			public IntPtr e;
+			public IntPtr d;
+			public IntPtr p;
+			public IntPtr q;
+			public IntPtr dmp1;
+			public IntPtr dmq1;
+			public IntPtr iqmp;
+	
+			#region CRYPTO_EX_DATA ex_data;
+			public IntPtr ex_data_sk;
+			public int ex_data_dummy;
+			#endregion
+			public int references;
+			public int flags;
+
+			public IntPtr _method_mod_n;
+			public IntPtr _method_mod_p;
+			public IntPtr _method_mod_q;
+
+			public IntPtr bignum_data;
+			public IntPtr blinding;
+			public IntPtr mt_blinding;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		struct rsa_st_windows
+		{
+			public int pad;
+			// version is declared natively as long
+			// http://stackoverflow.com/questions/384502/what-is-the-bit-size-of-long-on-64-bit-windows
+			// this is an attempt to map it in a portable way:
+			public int version;
 			public IntPtr meth;
 
 			public IntPtr engine;
@@ -113,6 +145,27 @@ namespace OpenSSL.Crypto
 		#endregion
 
 		#region Initialization
+		private static int offsetOfE;
+		private static int offsetOfN;
+		private static int offsetOfDp;
+		private static int offsetOfDq;
+		private static int offsetOfIQmp;
+		private static int offsetOfD;
+		private static int offsetOfP;
+		private static int offsetOfQ;
+		static RSA()
+		{
+			Type t = System.Environment.OSVersion.Platform == PlatformID.Win32NT ? typeof(rsa_st_windows) : typeof(rsa_st);
+			offsetOfE = Marshal.OffsetOf(t, nameof(rsa_st.e)).ToInt32();
+			offsetOfN = Marshal.OffsetOf(t, nameof(rsa_st.n)).ToInt32();
+			offsetOfDp = Marshal.OffsetOf(t, nameof(rsa_st.dmp1)).ToInt32();
+			offsetOfDq = Marshal.OffsetOf(t, nameof(rsa_st.dmq1)).ToInt32();
+			offsetOfIQmp = Marshal.OffsetOf(t, nameof(rsa_st.iqmp)).ToInt32();
+			offsetOfD = Marshal.OffsetOf(t, nameof(rsa_st.d)).ToInt32();
+			offsetOfP = Marshal.OffsetOf(t, nameof(rsa_st.p)).ToInt32();
+			offsetOfQ = Marshal.OffsetOf(t, nameof(rsa_st.q)).ToInt32();
+		}
+
 		internal RSA(IntPtr ptr, bool owner) 
 			: base(ptr, owner) 
 		{ }
@@ -177,12 +230,6 @@ namespace OpenSSL.Crypto
 		#endregion
 
 		#region Properties
-		private rsa_st Raw
-		{
-			get { return (rsa_st)Marshal.PtrToStructure(ptr, typeof(rsa_st)); }
-			set { Marshal.StructureToPtr(value, ptr, false); }
-		}
-
 		/// <summary>
 		/// Returns RSA_size()
 		/// </summary>
@@ -207,12 +254,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber PublicExponent
 		{
-			get { return new BigNumber(Raw.e, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfE), false); }
 			set
 			{
-				var raw = Raw;
-				raw.e = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfE, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -221,12 +266,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber PublicModulus
 		{
-			get { return new BigNumber(Raw.n, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfN), false); }
 			set
 			{
-				var raw = Raw;
-				raw.n = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfN, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -235,12 +278,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber PrivateExponent
 		{
-			get { return new BigNumber(Raw.d, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfD), false); }
 			set
 			{
-				var raw = Raw;
-				raw.d = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfD, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -249,12 +290,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber SecretPrimeFactorP
 		{
-			get { return new BigNumber(Raw.p, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfP), false); }
 			set
 			{
-				var raw = Raw;
-				raw.p = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfP, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -263,12 +302,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber SecretPrimeFactorQ
 		{
-			get { return new BigNumber(Raw.q, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfQ), false); }
 			set
 			{
-				var raw = Raw;
-				raw.q = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfQ, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -278,12 +315,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber DmodP1
 		{
-			get { return new BigNumber(Raw.dmp1, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfDp), false); }
 			set
 			{
-				var raw = Raw;
-				raw.dmp1 = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfDp, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -293,12 +328,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber DmodQ1
 		{
-			get { return new BigNumber(Raw.dmq1, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfDq), false); }
 			set
 			{
-				var raw = Raw;
-				raw.dmq1 = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfDq, Native.BN_dup(value.Handle));
 			}
 		}
 
@@ -308,12 +341,10 @@ namespace OpenSSL.Crypto
 		/// </summary>
 		public BigNumber IQmodP
 		{
-			get { return new BigNumber(Raw.iqmp, false); }
+			get { return new BigNumber(Marshal.ReadIntPtr(ptr, offsetOfIQmp), false); }
 			set
 			{
-				var raw = Raw;
-				raw.iqmp = Native.BN_dup(value.Handle);
-				Raw = raw;
+				Marshal.WriteIntPtr(ptr, offsetOfIQmp, Native.BN_dup(value.Handle));
 			}
 		}
 
