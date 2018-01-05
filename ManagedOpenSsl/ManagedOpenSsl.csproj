@@ -12,7 +12,9 @@
     <Product>OpenSSL.NET</Product>
     <Authors>Frank Chen</Authors>
     <PackageProjectUrl>https://github.com/FrankChen021/openssl-net</PackageProjectUrl>
-    <Version>0.6</Version>
+    <Version>0.61</Version>
+    <PackageReleaseNotes>0.61: update NativeRuntime.OpenSSL to 1.0.21.1
+0.6:   forked from openssl-net master branch, and migrated to target to NETStandard2.0</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,7 +24,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="NativeRuntime.OpenSSL" Version="1.0.21" />
+    <PackageReference Include="NativeRuntime.OpenSSL" Version="1.0.21.1" />
   </ItemGroup>
 
 
