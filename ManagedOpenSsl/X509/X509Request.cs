@@ -92,7 +92,7 @@ namespace OpenSSL.X509
 			#region ASN1_ENCODING enc;
 
 			public IntPtr enc_enc;
-			public int enc_len;
+			public IntPtr enc_len;
 			public int enc_modified;
 
 			#endregion
